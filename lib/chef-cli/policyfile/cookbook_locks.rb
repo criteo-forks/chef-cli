@@ -62,13 +62,14 @@ module ChefCLI
 
       attr_accessor :version
 
-      def initialize(name, storage_config)
+      def initialize(name, storage_config, shared_scm_context = {})
         @name = name
         @version = nil
         @source_options = nil
         @identifier = nil
         @dotted_decimal_identifier = nil
         @storage_config = storage_config
+        @shared_scm_context = shared_scm_context
       end
 
       def installed?
@@ -280,7 +281,7 @@ module ChefCLI
       # given, it is resolved relative to #relative_paths_root
       attr_accessor :source
 
-      def initialize(name, storage_config)
+      def initialize(name, storage_config, shared_scm_context = {})
         @name = name
         @identifier = nil
         @storage_config = storage_config
@@ -289,6 +290,7 @@ module ChefCLI
         @version_updated = false
         @cookbook_in_git_repo = nil
         @scm_info = nil
+        @shared_scm_context = shared_scm_context
       end
 
       def cookbook_path
@@ -297,7 +299,7 @@ module ChefCLI
 
       def scm_profiler
         if cookbook_in_git_repo?
-          CookbookProfiler::Git.new(cookbook_path)
+          CookbookProfiler::Git.new(cookbook_path, @shared_scm_context)
         else
           CookbookProfiler::NullSCM.new(cookbook_path)
         end
