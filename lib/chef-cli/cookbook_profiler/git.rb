@@ -25,15 +25,16 @@ module ChefCLI
 
       attr_reader :cookbook_path
 
-      def initialize(cookbook_path)
+      def initialize(cookbook_path, shared_scm_context = {})
         @cookbook_path = cookbook_path
         @unborn_branch = nil
         @unborn_branch_ref = nil
+        @shared_scm_context = shared_scm_context
       end
 
       # @return [Hash] Hashed used for pinning cookbook versions within a Policyfile.lock
       def profile_data
-        {
+        @shared_scm_context[repo_directory] ||= {
           "scm" => "git",
           # To get this info, you need to do something like:
           # figure out branch or assume 'main'
@@ -103,6 +104,13 @@ module ChefCLI
       end
 
       private
+
+      def repo_directory
+        @repo_directory ||= Pathname.new(@cookbook_path).ascend do |parent_dir|
+          possible_git_dir = File.join(parent_dir, '.git')
+          break possible_git_dir if File.directory?(possible_git_dir )
+        end
+      end
 
       def git!(subcommand, options = {})
         cmd = git(subcommand, options)
