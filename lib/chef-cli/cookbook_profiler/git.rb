@@ -104,16 +104,12 @@ module ChefCLI
       end
 
       private
-      
+
       def repo_directory
-        @repo_directory ||=
-          Pathname.new(@cookbook_path).ascend do |parent_dir|
-            possbile_git_dir = File.join(parent_dir, '.git')
-            if File.directory?(possbile_git_dir)
-              return possbile_git_dir
-            end
-          end
-          @repo_directory
+        @repo_directory ||= Pathname.new(@cookbook_path).ascend do |parent_dir|
+          possible_git_dir = File.join(parent_dir, '.git')
+          break possible_git_dir if File.directory?(possible_git_dir )
+        end
       end
 
       def git!(subcommand, options = {})
