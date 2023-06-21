@@ -62,14 +62,13 @@ module ChefCLI
 
       attr_accessor :version
 
-      def initialize(name, storage_config, shared_scm_context = {})
+      def initialize(name, storage_config)
         @name = name
         @version = nil
         @source_options = nil
         @identifier = nil
         @dotted_decimal_identifier = nil
         @storage_config = storage_config
-        @shared_scm_context = shared_scm_context
       end
 
       def installed?
